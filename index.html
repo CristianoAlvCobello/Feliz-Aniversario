@@ -6,7 +6,7 @@
 <title>Feliz Aniversário 🖤❤️</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@300;400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet">
 <style>
   :root{
     --black: #0c0a0b;
@@ -31,7 +31,7 @@
     font-family:'Poppins',sans-serif;
   }
   h1,h2,.display{ font-family:'Fredoka',sans-serif; margin:0; }
-  .handwritten{ font-family:'Caveat',cursive; }
+  .handwritten{ font-family:'Lora',serif; font-style:italic; }
   button{ font-family:'Fredoka',sans-serif; cursor:pointer; border:none; }
 
   @media (prefers-reduced-motion: reduce){
@@ -55,14 +55,6 @@
   }
   h1{ font-size: clamp(1.7rem, 6vw, 2.3rem); line-height:1.2; }
   .sub{ color: var(--muted); font-size:.95rem; margin-top:.6rem; }
-
-  .hud{
-    display:flex; justify-content:center; gap:1.6rem;
-    margin-top: 1.6rem;
-    font-family:'Fredoka',sans-serif;
-    color: var(--gold);
-    font-size:.9rem;
-  }
 
   .grid{
     display:grid;
@@ -157,9 +149,9 @@
     border-radius: 12px;
     padding: 1.8rem 1.5rem;
     text-align:left;
-    font-family:'Caveat',cursive;
-    font-size: 1.28rem;
-    line-height: 1.5;
+    font-family:'Lora',serif;
+    font-size: 1.05rem;
+    line-height: 1.75;
     box-shadow: 0 24px 50px rgba(0,0,0,.45);
     max-height: 0;
     overflow: hidden;
@@ -167,8 +159,8 @@
     transition: max-height .8s ease, opacity .8s ease;
   }
   .letter-paper.show{ max-height: 2000px; opacity: 1; }
-  .letter-paper p{ margin: 0 0 .9rem; }
-  .letter-caps{ font-weight: 700; }
+  .letter-paper p{ margin: 0 0 1rem; }
+  .letter-caps{ font-weight: 600; font-size: 1.12rem; }
   .hearts{ letter-spacing: 2px; margin: 0 0 .2rem; }
 
   footer{ margin-top: 3rem; color: var(--muted); font-size:.8rem; }
@@ -182,11 +174,6 @@
   <span class="eyebrow">antes do seu presente...</span>
   <h1>encontre todos os pares 🖤❤️</h1>
   <p class="sub">ache as 8 duplas pra desbloquear uma cartinha especial escrita só pra você.</p>
-
-  <div class="hud">
-    <span>movimentos: <span id="moves">0</span></span>
-    <span>tempo: <span id="time">00:00</span></span>
-  </div>
 
   <div class="grid" id="grid"></div>
 
@@ -214,7 +201,7 @@
     </div>
   </div>
 
-  <footer>Ass: CriCri.</footer>
+  <footer>feito com carinho, especialmente pra você.</footer>
 </div>
 
 <script>
@@ -251,16 +238,13 @@
   ];
 
   const gridEl = document.getElementById('grid');
-  const movesEl = document.getElementById('moves');
-  const timeEl = document.getElementById('time');
   const restartBtn = document.getElementById('restart-btn');
   const rewardEl = document.getElementById('reward');
   const resultText = document.getElementById('result-text');
   const envelope = document.getElementById('envelope');
   const letterPaper = document.getElementById('letter-paper');
 
-  let flipped = [], lockBoard = false, matchedCount = 0, moves = 0;
-  let seconds = 0, timerInterval = null, started = false;
+  let flipped = [], lockBoard = false, matchedCount = 0;
 
   function shuffle(arr){
     for(let i = arr.length - 1; i > 0; i--){
@@ -270,28 +254,10 @@
     return arr;
   }
 
-  function updateTime(){
-    const m = String(Math.floor(seconds/60)).padStart(2,'0');
-    const s = String(seconds%60).padStart(2,'0');
-    timeEl.textContent = `${m}:${s}`;
-  }
-
-  function startTimerIfNeeded(){
-    if(started) return;
-    started = true;
-    timerInterval = setInterval(() => { seconds++; updateTime(); }, 1000);
-  }
-
   function buildGrid(){
     flipped = [];
     lockBoard = false;
     matchedCount = 0;
-    moves = 0;
-    seconds = 0;
-    started = false;
-    clearInterval(timerInterval);
-    movesEl.textContent = '0';
-    updateTime();
 
     const deck = shuffle([...ICONS, ...ICONS]);
     gridEl.innerHTML = '';
@@ -310,13 +276,10 @@
 
   function onCardClick(card, icon){
     if(lockBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-    startTimerIfNeeded();
     card.classList.add('flipped');
     flipped.push({ card, icon });
 
     if(flipped.length === 2){
-      moves++;
-      movesEl.textContent = moves;
       lockBoard = true;
       const [a, b] = flipped;
       if(a.icon.key === b.icon.key){
@@ -338,7 +301,7 @@
   }
 
   function finishGame(){
-    clearInterval(timerInterval);
+    resultText.textContent = 'você achou todos os pares! agora é hora do seu presente 💌';
     rewardEl.classList.add('unlocked');
     burstConfetti(22);
     setTimeout(() => rewardEl.scrollIntoView({ behavior:'smooth', block:'start' }), 300);
